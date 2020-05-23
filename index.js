@@ -8,7 +8,7 @@ const server = restify.createServer();
 // Middleware inclusion
 server.use(restify.plugins.bodyParser());
 
-// To Protect the Routes - Basically saying ALL ROUTES must be protected unless it is the /auth endpoint
+// To Protect ALL the Routes - Basically saying ALL ROUTES must be protected unless it is the /auth endpoint
 // server.use(rjwt({ secret: config.JWT_SECRET }).unless({ path: ['/auth'] }));
 
 
