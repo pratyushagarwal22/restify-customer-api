@@ -1,5 +1,8 @@
 const errors = require('restify-errors');
 const Customer = require('../models/Customers');
+// To protect only a few routes implement it in this way
+const rjwt = require('restify-jwt-community');
+const config = require('../config');
 
 
 module.exports = server => {
@@ -30,7 +33,8 @@ module.exports = server => {
 
 
     // To Add Customers
-    server.post('/customers', async (req, res, next) => {
+    // To protect this Route
+    server.post('/customers', rjwt({ secret: config.JWT_SECRET }), async (req, res, next) => {
         // Check for Content-type of JSON
         if(!req.is('application/json')) {
             return next(new errors.InvalidContentError("Expects 'application/json'"));
@@ -62,7 +66,8 @@ module.exports = server => {
 
 
     // To Update a Customers Details
-    server.put('/customers/:id', async (req, res, next) => {
+    // To protect the Update Customer Route
+    server.put('/customers/:id', rjwt({ secret: config.JWT_SECRET }), async (req, res, next) => {
         // Check for Content-type of JSON
         if(!req.is('application/json')) {
             return next(new errors.InvalidContentError("Expects 'application/json'"));
@@ -81,7 +86,7 @@ module.exports = server => {
     });
 
     // To Delete a Customer
-    server.del('/customers/:id', async (req, res, next) => {
+    server.del('/customers/:id', rjwt({ secret: config.JWT_SECRET }), async (req, res, next) => {
         try {
             const customer = await Customer.findOneAndRemove({ _id: req.params.id });
             res.send(204);
@@ -93,3 +98,5 @@ module.exports = server => {
     });
 };
 
+
+// If only a specific route it to be protected add this, before 'async' and after the 'route' rjwt({ secret: config.JWT_SECRET })
